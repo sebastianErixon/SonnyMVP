@@ -2,7 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeData _currentTheme = ThemeData.light();
+
+  void _toggleTheme() {
+    setState(() {
+      _currentTheme = _currentTheme == ThemeData.light()
+          ? ThemeData.dark()
+          : ThemeData.light();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Chat App',
+      theme: _currentTheme, // Use the current theme
+      home: ChatWidget(
+        toggleTheme: _toggleTheme,
+      ),
+    );
+  }
+}
+
 class ChatWidget extends StatefulWidget {
+  const ChatWidget({Key? key, required this.toggleTheme}) : super(key: key);
+
+  final Function toggleTheme;
+
   @override
   _ChatWidgetState createState() => _ChatWidgetState();
 }
@@ -49,11 +87,11 @@ class _ChatWidgetState extends State<ChatWidget> {
 
     final response = await chatGPTAPI(message);
 
-    if (response != null && response.isNotEmpty) {
+    if (response.isNotEmpty) {
       setState(() {
         // Add the user message and the assistant's response together
         messages.add({'role': 'user', 'content': message});
-        messages.add({'role': 'Sonny', 'content': response});
+        messages.add({'role': 'Assistant', 'content': response});
       });
 
       _messageController.clear();
@@ -63,6 +101,19 @@ class _ChatWidgetState extends State<ChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sonny', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_4),
+            onPressed: () {
+              // Call the toggleTheme function in MyApp
+              widget.toggleTheme();
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -72,10 +123,25 @@ class _ChatWidgetState extends State<ChatWidget> {
                 final role = messages[index]['role'];
                 final content = messages[index]['content'];
 
-                return ListTile(
-                  title: Text(
-                    '$role: $content',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: role == 'user'
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: role == 'user' ? Colors.grey[300] : Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        content!,
+                        style: TextStyle(
+                          color: role == 'user' ? Colors.black : Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },
@@ -88,13 +154,13 @@ class _ChatWidgetState extends State<ChatWidget> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Type your message...',
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),
               ],
@@ -104,10 +170,4 @@ class _ChatWidgetState extends State<ChatWidget> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ChatWidget(),
-  ));
 }
