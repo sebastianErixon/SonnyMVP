@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'Home.dart'; // Import the Home page
+import 'Konto.dart'; // Import the Konto page
+
 void main() {
   runApp(const MyApp());
 }
@@ -28,10 +31,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chat App',
-      theme: _currentTheme, // Use the current theme
+      theme: _currentTheme,
       home: ChatWidget(
         toggleTheme: _toggleTheme,
       ),
+      routes: {
+        '/home': (context) => const Home(), // Add route for Home page
+        '/konto': (context) => const Konto(), // Add route for Konto page
+      },
     );
   }
 }
@@ -98,6 +105,39 @@ class _ChatWidgetState extends State<ChatWidget> {
     }
   }
 
+  void _showOptionsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: const Text('Option 1'),
+                onTap: () {
+                  Navigator.pop(context); // Close the modal sheet
+                  // Implement action for Option 1
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text('Option 2'),
+                onTap: () {
+                  Navigator.pop(context); // Close the modal sheet
+                  // Implement action for Option 2
+                },
+              ),
+              // Add more options as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,20 +188,83 @@ class _ChatWidgetState extends State<ChatWidget> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type your message...',
+                GestureDetector(
+                  onTap: () {
+                    _showOptionsModal(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(3.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300], // Grey color
+                      //shape: BoxShape.rectangle, // Make the button a rectangle
+                    ),
+                    child: const Icon(
+                      Icons.grid_view_sharp,
+                      color: Colors.blueGrey,
+                      size: 24.0,
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
+                const SizedBox(width: 8.0),
+                GestureDetector(
+                  onTap: () {
+                    _showOptionsModal(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(3.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300], // Grey color
+                      shape: BoxShape.circle, // Make the button circular
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.blueGrey,
+                      size: 24.0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: 'Type your message...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 20.0,
+                        ),
+                        suffixIcon: InkWell(
+                          onTap: _sendMessage,
+                          child: Container(
+                            width:
+                                36.0, // Adjust the size of the button as needed
+                            height: 36.0,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue, // Button background color
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.arrow_upward,
+                                color: Colors.white, // Icon color
+                                size: 25.0, // Icon size
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
