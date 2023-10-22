@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
-import 'chat_widget.dart'; // Import the ChatWidget from your new file
+import 'navbar.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeData _currentTheme = ThemeData.light();
+  bool _isDarkMode = false; // Add this variable
+
+  void _toggleTheme() {
+    setState(() {
+      _currentTheme = _isDarkMode ? ThemeData.light() : ThemeData.dark();
+      _isDarkMode = !_isDarkMode; // Toggle the dark mode state
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Chat App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      title: 'Sonny',
+      theme: _currentTheme,
+      home: NavBar(
+        toggleTheme: _toggleTheme,
       ),
-      home: const ChatWidget(), // Use ChatWidget as the default widget
     );
   }
 }
