@@ -10,10 +10,7 @@ class Konto extends StatelessWidget {
         title: const Text('Konto Page'),
       ),
       body: const Center(
-        child: Text(
-          'This is the Konto Page.',
-          style: TextStyle(fontSize: 20),
-        ),
+        child: Text('This is the Konto Page'),
       ),
     );
   }
