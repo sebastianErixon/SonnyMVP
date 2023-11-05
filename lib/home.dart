@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sonny_app/HomePages/bibliotek.dart';
+import 'package:sonny_app/HomePages/dina_mal.dart';
+import 'package:sonny_app/HomePages/paminelser.dart';
+import 'package:sonny_app/HomePages/dagbok.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,6 +21,13 @@ class _HomeState extends State<Home> {
 
   void initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  void navigateToPage(Widget destination) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => destination),
+    );
   }
 
   @override
@@ -57,10 +68,21 @@ class _HomeState extends State<Home> {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: Colors.black, width: 0.5),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
                 child: TextFormField(
                   controller: goalsController,
+                  onTap: () {
+                    navigateToPage(const DinaMal());
+                  },
                   onChanged: (text) {
                     saveUserInput(); // Save user input as it changes
                   },
@@ -85,6 +107,9 @@ class _HomeState extends State<Home> {
                 ),
                 child: TextFormField(
                   controller: dagbokController,
+                  onTap: () {
+                    navigateToPage(const Dagbok());
+                  },
                   onChanged: (text) {
                     saveUserInput(); // Save user input as it changes
                   },
@@ -109,6 +134,9 @@ class _HomeState extends State<Home> {
                 ),
                 child: TextFormField(
                   controller: remindersController,
+                  onTap: () {
+                    navigateToPage(const Paminelser());
+                  },
                   onChanged: (text) {
                     saveUserInput(); // Save user input as it changes
                   },
@@ -133,6 +161,9 @@ class _HomeState extends State<Home> {
                 ),
                 child: TextFormField(
                   controller: libraryController,
+                  onTap: () {
+                    navigateToPage(const Bibliotek());
+                  },
                   onChanged: (text) {
                     saveUserInput(); // Save user input as it changes
                   },
